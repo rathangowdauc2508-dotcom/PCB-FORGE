@@ -1,11 +1,12 @@
 from __future__ import annotations
 
 import io
+import base64
 from pathlib import Path
 
 import numpy as np
 import pytest
-from PIL import Image
+from PIL import Image, ImageDraw
 
 from app import pcb_defect_detector as detector
 
@@ -102,7 +103,51 @@ def test_detect_returns_real_boxes_and_annotated_image(monkeypatch, tmp_path: Pa
     assert result["image_width"] == 48
     assert result["image_height"] == 32
     assert result["annotated_image_base64"]
+    annotated = Image.open(io.BytesIO(base64.b64decode(result["annotated_image_base64"])))
+    assert annotated.size == (48, 32)
     assert prediction.plotted_class_ids == [1]
+
+
+def test_nearby_labels_are_placed_in_distinct_rectangles():
+    image = Image.new("RGB", (240, 160), "white")
+    draw = ImageDraw.Draw(image)
+    font = detector._annotation_font(image.width)
+    occupied = []
+    boxes = [
+        {"x1": 80, "y1": 70, "x2": 120, "y2": 110},
+        {"x1": 105, "y1": 72, "x2": 145, "y2": 112},
+    ]
+
+    first = detector._label_rect(draw, "CFO 91%", font, boxes[0], 240, 160, occupied)
+    second = detector._label_rect(draw, "SC 59%", font, boxes[1], 240, 160, occupied)
+
+    assert first[2] <= second[0] or second[2] <= first[0] or first[3] <= second[1] or second[3] <= first[1]
+
+
+def test_clustered_labels_use_non_overlapping_positions_or_fallback_markers():
+    image = Image.new("RGB", (80, 60), "white")
+    draw = ImageDraw.Draw(image)
+    font = detector._annotation_font(image.width)
+    occupied = []
+    boxes = [
+        {"x1": 34, "y1": 25, "x2": 46, "y2": 37},
+        {"x1": 35, "y1": 25, "x2": 47, "y2": 37},
+        {"x1": 36, "y1": 26, "x2": 48, "y2": 38},
+        {"x1": 34, "y1": 27, "x2": 46, "y2": 39},
+        {"x1": 35, "y1": 28, "x2": 47, "y2": 40},
+        {"x1": 36, "y1": 29, "x2": 48, "y2": 41},
+    ]
+
+    placements = [
+        detector._label_rect(draw, f"DEFECT-{index} 90%", font, box, 80, 60, occupied)
+        for index, box in enumerate(boxes)
+    ]
+
+    assert any(placement is None for placement in placements)
+    placed = [placement for placement in placements if placement is not None]
+    for index, current in enumerate(placed):
+        for other in placed[index + 1:]:
+            assert current[2] <= other[0] or other[2] <= current[0] or current[3] <= other[1] or other[3] <= current[1]
 
 
 def test_all_nine_classes_use_per_class_thresholds_after_inference(monkeypatch, tmp_path: Path):

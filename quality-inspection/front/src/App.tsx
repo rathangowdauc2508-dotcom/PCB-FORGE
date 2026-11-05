@@ -22,6 +22,13 @@ function displayName(name: string): string {
     .replace(/\b\w/g, (letter) => letter.toUpperCase());
 }
 
+function base64ToBlobUrl(encoded: string, mimeType = 'image/jpeg'): string {
+  const raw = encoded.includes(',') ? encoded.slice(encoded.indexOf(',') + 1) : encoded;
+  const binary = atob(raw);
+  const bytes = Uint8Array.from(binary, (character) => character.charCodeAt(0));
+  return URL.createObjectURL(new Blob([bytes], { type: mimeType }));
+}
+
 export default function App() {
   const inputRef = useRef<HTMLInputElement>(null);
   const [file, setFile] = useState<File | null>(null);
@@ -33,6 +40,28 @@ export default function App() {
   const [dragging, setDragging] = useState(false);
   const [error, setError] = useState('');
   const [result, setResult] = useState<PCBDetectionResponse | null>(null);
+  const [fullSizeOpen, setFullSizeOpen] = useState(false);
+  const [fullSizeZoom, setFullSizeZoom] = useState(1);
+  const [annotatedImageUrl, setAnnotatedImageUrl] = useState('');
+
+  useEffect(() => {
+    if (!result?.annotated_image_base64) {
+      setAnnotatedImageUrl('');
+      return;
+    }
+    const url = base64ToBlobUrl(result.annotated_image_base64);
+    setAnnotatedImageUrl(url);
+    return () => URL.revokeObjectURL(url);
+  }, [result]);
+
+  useEffect(() => {
+    if (!fullSizeOpen) return;
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setFullSizeOpen(false);
+    };
+    window.addEventListener('keydown', closeOnEscape);
+    return () => window.removeEventListener('keydown', closeOnEscape);
+  }, [fullSizeOpen]);
 
   useEffect(() => () => {
     if (preview.startsWith('blob:')) URL.revokeObjectURL(preview);
@@ -73,6 +102,7 @@ export default function App() {
     setFile(next);
     setPreview(URL.createObjectURL(next));
     setResult(null);
+    setFullSizeOpen(false);
     setError('');
   };
 
@@ -183,7 +213,17 @@ export default function App() {
             <div className="result-meta"><strong>{result.model_name}</strong><span>{result.inference_ms} ms</span></div>
           </div>
           <p className="result-caveat">These are model findings for human review. A photo cannot verify electrical continuity or hidden-layer faults.</p>
-          <div className="result-image-wrap"><img src={`data:image/jpeg;base64,${result.annotated_image_base64}`} alt="PCB photo with suspected defect regions marked" /></div>
+          <div className="result-image-wrap">
+            {annotatedImageUrl && <img src={annotatedImageUrl} alt="PCB photo with suspected defect regions marked" />}
+            <button
+              className="result-image-open"
+              type="button"
+              onClick={() => { setFullSizeZoom(1); setFullSizeOpen(true); }}
+              disabled={!annotatedImageUrl}
+            >
+              Open full size
+            </button>
+          </div>
           {result.detections.length > 0 ? <ul className="finding-list">
             {result.detections.map((finding) => <li key={finding.id}>
               <span className="finding-number">{String(finding.id).padStart(2, '0')}</span>
@@ -193,6 +233,24 @@ export default function App() {
             </li>)}
           </ul> : <p className="no-findings-note">No regions crossed this model’s detection threshold. This does not prove the board is defect-free.</p>}
         </section>}
+        {fullSizeOpen && annotatedImageUrl && (
+          <div className="image-lightbox" role="dialog" aria-modal="true" aria-label="Full-size annotated PCB image" onClick={() => setFullSizeOpen(false)}>
+            <div className="image-lightbox-panel" onClick={(event) => event.stopPropagation()}>
+              <div className="image-lightbox-toolbar">
+                <strong>Annotated PCB image</strong>
+                <div>
+                  <button type="button" className="btn" onClick={() => setFullSizeZoom((zoom) => Math.max(0.5, zoom - 0.25))}>−</button>
+                  <span className="image-lightbox-zoom">{Math.round(fullSizeZoom * 100)}%</span>
+                  <button type="button" className="btn" onClick={() => setFullSizeZoom((zoom) => Math.min(3, zoom + 0.25))}>+</button>
+                  <button type="button" className="btn" onClick={() => setFullSizeOpen(false)}>Close</button>
+                </div>
+              </div>
+              <div className="image-lightbox-canvas">
+                <img src={annotatedImageUrl} alt="Full-size annotated PCB image" style={{ width: `${fullSizeZoom * 100}%` }} />
+              </div>
+            </div>
+          </div>
+        )}
       </PageLayout>
     </>
   );
