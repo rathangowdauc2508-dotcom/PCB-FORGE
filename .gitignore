@@ -1,0 +1,38 @@
+# Local configuration and environments
+.env
+.env.*
+!.env.example
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+
+# Frontend builds and installed packages
+node_modules/
+.next/
+dist/
+coverage/
+
+# Local app state and editor files
+ai-pcb-agent/backend/data/app.db
+ai-pcb-agent/backend/data/uploads/
+*.log
+.DS_Store
+Thumbs.db
+
+.runlogs/
+quality-inspection/vendor/
+quality-inspection/runs/
+quality-inspection/models/*.pt
+quality-inspection/models/training-metadata.json
+quality-inspection/data/pcb-defects/images/*
+!quality-inspection/data/pcb-defects/images/*/.gitkeep
+quality-inspection/data/pcb-defects/labels/*
+!quality-inspection/data/pcb-defects/labels/*/.gitkeep
+
+# External datasets and large local assets
+quality-inspection/data/external/
+quality-inspection/real-data/
+
+# Backup archives
+PCB-Forge-Inspection-20261031-175349.zip

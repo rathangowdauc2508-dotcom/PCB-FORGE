@@ -1,0 +1,62 @@
+{
+  "STM32F401RET6": {
+    "description": "ARM Cortex-M4 MCU, 512KB Flash",
+    "unit_cost_usd": 6.2,
+    "availability": "AVAILABLE",
+    "alternatives": []
+  },
+  "STM32F103C8T6": {
+    "description": "ARM Cortex-M3 MCU, 64KB Flash",
+    "unit_cost_usd": 2.1,
+    "availability": "AVAILABLE",
+    "alternatives": ["GD32F103C8T6"]
+  },
+  "AMS1117-3.3": {
+    "description": "3.3V LDO Voltage Regulator",
+    "unit_cost_usd": 0.15,
+    "availability": "AVAILABLE",
+    "alternatives": ["LM1117-3.3"]
+  },
+  "DRV8833": {
+    "description": "Dual H-Bridge Motor Driver",
+    "unit_cost_usd": 1.8,
+    "availability": "LOW_STOCK",
+    "alternatives": ["TB6612FNG", "L298N"]
+  },
+  "MPU6050": {
+    "description": "6-axis IMU (Gyro + Accel)",
+    "unit_cost_usd": 2.4,
+    "availability": "AVAILABLE",
+    "alternatives": ["ICM-20689"]
+  },
+  "USB-C-16P": {
+    "description": "USB-C Receptacle Connector, 16-pin",
+    "unit_cost_usd": 0.6,
+    "availability": "AVAILABLE",
+    "alternatives": []
+  },
+  "XYZ123-CUSTOM": {
+    "description": "Custom sensor module (legacy)",
+    "unit_cost_usd": 4.5,
+    "availability": "UNAVAILABLE",
+    "alternatives": ["ABC123-SENSOR", "DEF456-SENSOR-V2"]
+  },
+  "0402-RES": {
+    "description": "0402 Chip Resistor (assorted)",
+    "unit_cost_usd": 0.01,
+    "availability": "AVAILABLE",
+    "alternatives": []
+  },
+  "0402-CAP": {
+    "description": "0402 MLCC Capacitor (assorted)",
+    "unit_cost_usd": 0.01,
+    "availability": "AVAILABLE",
+    "alternatives": []
+  },
+  "SN74LVC1G17": {
+    "description": "Single Schmitt-Trigger Buffer",
+    "unit_cost_usd": 0.25,
+    "availability": "AVAILABLE",
+    "alternatives": []
+  }
+}

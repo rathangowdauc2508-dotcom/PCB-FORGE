@@ -1,0 +1,2 @@
+# Optional CPU-compatible YOLOv8 inspection dependency. PyTorch is installed by this package.
+ultralytics>=8.3,<9

@@ -1,0 +1,12 @@
+IPC-2221B Section 6.1
+Minimum electrical clearance between external conductors shall be maintained according to operating voltage.
+
+For low-voltage traces around 5V logic domains:
+- keep spacing at or above 0.10 mm
+- avoid residual copper bridges between SDA/SCL lines and neighboring GND references
+- verify etching and wash process to prevent conductive residue
+
+Violation impact:
+- bus arbitration loss
+- stuck-low data line
+- intermittent communication faults under load

@@ -1,0 +1,40 @@
+{
+  "request": {
+    "input": {
+      "error_log": "[ERROR] I2C Bus Arbitration Lost - SDA line held LOW. Error Code: 0x08",
+      "spec_excerpt": null,
+      "spec_document_path": "data/specs/ipc_2221b_excerpt.txt",
+      "design_image": {
+        "mime_type": "image/png",
+        "file_path": "data/assets/template_board.png"
+      },
+      "tested_image": {
+        "mime_type": "image/png",
+        "file_path": "data/assets/tested_board.png"
+      }
+    },
+    "options": {
+      "include_raw_agent_payloads": true
+    }
+  },
+  "expected_output_example": {
+    "root_cause": "Design spacing looked acceptable, but manufacturing residue created a conductive bridge between adjacent traces causing a micro-short on SDA.",
+    "impact": "I2C communication instability and potential overcurrent risk for connected sensors or MCU pins.",
+    "resolution": [
+      "Remove solder/copper bridge around the highlighted coordinates and re-test continuity.",
+      "Request process audit from PCB fabrication line for washing/etch residue controls.",
+      "Add AOI gate for bridge-like residue in final inspection."
+    ],
+    "confidence": 0.8,
+    "bounding_boxes": [
+      {
+        "label": "spurious_copper_short",
+        "x1": 445,
+        "y1": 215,
+        "x2": 520,
+        "y2": 275,
+        "confidence": 0.94
+      }
+    ]
+  }
+}

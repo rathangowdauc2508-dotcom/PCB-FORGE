@@ -1,0 +1,35 @@
+[
+  {
+    "id": "manufacturer_a",
+    "name": "Manufacturer A",
+    "base_price_usd": 18.0,
+    "lead_time_days": 7,
+    "max_layers": 4,
+    "min_trace_width_mm": 0.13,
+    "min_clearance_mm": 0.13,
+    "min_drill_diameter_mm": 0.3,
+    "rating": 4.2
+  },
+  {
+    "id": "manufacturer_b",
+    "name": "Manufacturer B",
+    "base_price_usd": 23.0,
+    "lead_time_days": 4,
+    "max_layers": 6,
+    "min_trace_width_mm": 0.1,
+    "min_clearance_mm": 0.1,
+    "min_drill_diameter_mm": 0.2,
+    "rating": 4.8
+  },
+  {
+    "id": "manufacturer_c",
+    "name": "Manufacturer C",
+    "base_price_usd": 15.0,
+    "lead_time_days": 10,
+    "max_layers": 4,
+    "min_trace_width_mm": 0.15,
+    "min_clearance_mm": 0.15,
+    "min_drill_diameter_mm": 0.3,
+    "rating": 3.9
+  }
+]
