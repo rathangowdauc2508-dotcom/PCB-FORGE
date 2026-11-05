@@ -19,7 +19,9 @@ export interface PCBDetectorStatus {
   ultralytics_installed: boolean;
   weights_found: boolean;
   weights_path: string;
+  class_count: number;
   required_classes: string[];
+  confidence_thresholds: Record<string, number>;
   yolo_ready?: boolean;
   gemini_available?: boolean;
   backend?: 'yolo' | 'gemini' | 'none';
@@ -92,7 +94,9 @@ export const api = {
           ultralytics_installed: false,
           weights_found: false,
           weights_path: '',
+          class_count: 0,
           required_classes: [],
+          confidence_thresholds: {},
         };
       }
       throw new Error('Inspection API is reachable but has no compatible PCB photo-inspection route. Restart the PCB Forge backend.');
